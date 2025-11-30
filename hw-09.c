@@ -634,24 +634,29 @@ int main(void) {
 
     for (int c = 0; c < NUM_CRITERIA; c++) {
         printf("\n--- Criterion: %s ---\n", criteria_name[c]);
+        int has_duplicate = 0;
+        for (int i = 1; i < count; i++) {
+            if (criteria_cmp[c](original[i - 1], original[i]) == 0) {
+                has_duplicate = 1;
+                break;
+            }
+        }
+
         for (int a = 0; a < NUM_ALGOS; a++) {
             int is_gender = (c == 4 || c == 5);
-            int is_stable_algo = (strcmp(algo_name[a], "Bubble Sort") == 0) ||
+            int is_stable_algo =
+                (strcmp(algo_name[a], "Bubble Sort") == 0) ||
                 (strcmp(algo_name[a], "Insertion Sort") == 0) ||
                 (strcmp(algo_name[a], "Merge Sort") == 0);
+
             if (is_gender && !is_stable_algo) {
                 printf("%-15s : SKIPPED (GENDER uses only Bubble/Insertion/Merge)\n", algo_name[a]);
                 continue;
             }
 
-            int has_duplicate = 0;
-            for (int i = 1; i < count; i++) {
-                if (criteria_cmp[c](original[i - 1], original[i]) == 0) {
-                    has_duplicate = 1;
-                    break;
-                }
-            }
-            if ((strcmp(algo_name[a], "Heap Sort") == 0 || strcmp(algo_name[a], "Tree Sort") == 0) && has_duplicate) {
+            int is_heap_or_tree = (strcmp(algo_name[a], "Heap Sort") == 0) || (strcmp(algo_name[a], "Tree Sort") == 0);
+
+            if (is_heap_or_tree && has_duplicate) {
                 printf("%-15s : SKIPPED (duplicate data present)\n", algo_name[a]);
                 continue;
             }
